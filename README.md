@@ -1,59 +1,109 @@
-# Lung Cancer Prediction using Logistic Regression
+# 🫁 Lung Disease Detection using VGG19 and Grad-CAM
 
-This project aims to predict the likelihood of lung cancer using survey data. We perform data preprocessing, visualization, and model training using logistic regression.
+This project applies deep learning to classify chest X-ray images into three categories — **COVID-19**, **Normal**, and **Pneumonia**. We utilize transfer learning with **VGG19**, achieve around **97% validation accuracy**, interpret the results using **Grad-CAM**, and support decision-making with a **Decision Tree**.
 
-## 📁 Dataset
+---
 
-- **Source:** "https://www.kaggle.com/datasets/prashant268/chest-xray-covid19-pneumonia"
-- Contains responses to various lifestyle and health-related questions, along with a label indicating lung cancer status.
+## 📁 Project Structure
 
-## 🔧 Technologies Used
+```
+.
+├── Lung cancer.ipynb            # Jupyter notebook with all code
+├── vgg19_pneumonia_model.h5     # Trained model weights
+├── dataset/
+│   ├── train/
+│   │   ├── COVID/
+│   │   ├── NORMAL/
+│   │   └── PNEUMONIA/
+│   └── test/
+```
 
-- Python
-- Pandas, NumPy
-- Seaborn, Matplotlib
-- Scikit-learn
+---
 
-## 🚀 Steps Performed
+## 🚀 Overview of Steps
 
-1. **Data Loading**  
-   Load the CSV dataset using Pandas.
+### 1. 🧹 Data Loading & Preprocessing
+- Chest X-ray dataset loaded from `train/` and `test/` folders.
+- Image size standardized to **224x224**.
+- Data augmentation:
+  - Rotation, width/height shifts, shear, zoom, horizontal flip.
+- Preprocessing done using `ImageDataGenerator`.
 
-2. **Data Exploration**  
-   - View structure and summary statistics.
-   - Check for missing values.
+### 2. 🧠 Model: VGG19 + Custom Classifier
+- **VGG19** loaded with pretrained `imagenet` weights.
+- Top layers replaced with:
+  - `Flatten → Dense(256) → Dropout(0.5) → Dense(3 softmax)`
+- All layers except the last 4 frozen to prevent overfitting.
 
-3. **Data Preprocessing**  
-   - Encode categorical variables (`GENDER`, `LUNG_CANCER`).
-   - Convert age to integers.
+### 3. 📈 Training
+- Optimizer: `Adam`
+- Loss Function: `categorical_crossentropy`
+- Epochs: 20
+- Callback: `ReduceLROnPlateau` (for dynamic learning rate adjustment)
 
-4. **Visualization**  
-   - Class balance using `countplot`.
-   - Feature correlation using `heatmap`.
+### 4. 📊 Evaluation
+- Achieved ~97% validation accuracy.
+- Model saved as `vgg19_pneumonia_model.h5`.
 
-5. **Model Preparation**  
-   - Split data into features (`X`) and label (`y`).
-   - Train-test split (80/20).
+### 5. 🔍 Grad-CAM Visualization
+- Applied **Grad-CAM** to visualize areas of the image that influenced predictions.
+- This helps build trust in the model’s predictions, especially in clinical applications.
 
-6. **Model Training**  
-   - Logistic Regression using Scikit-learn.
+### 6. 🌲 Decision Tree Classifier
+- Extracted features and predictions were used to train a **Decision Tree** classifier.
+- Helps provide rule-based explanations for predictions.
 
-7. **Model Evaluation**  
-   - Accuracy
-   - Confusion matrix
-   - Precision, Recall, F1-score
+---
 
-## 📊 Results
+## 🧪 Results
 
-- **Model Accuracy:** `XX%` (replace with actual output)
-- Confusion Matrix and classification report give deeper insights into performance.
+| Metric        | Value      |
+|---------------|------------|
+| Accuracy       | ~97%       |
+| Model Used     | VGG19      |
+| Classes        | COVID, Normal, Pneumonia |
+| Explainability | Grad-CAM + Decision Tree |
 
-## 📌 Conclusion
+---
 
-The model helps predict lung cancer presence based on survey inputs. With proper medical validation, such models could support early warning systems.
+## 📌 Requirements
 
-## 📎 Future Work
+- Python 3.7+
+- TensorFlow 2.x
+- NumPy, Pandas, Matplotlib, Seaborn
+- scikit-learn
 
-- Try different models (Random Forest, SVM, etc.)
-- Tune hyperparameters
-- Use real clinical datasets
+Install dependencies:
+```bash
+pip install tensorflow numpy pandas matplotlib seaborn scikit-learn
+```
+
+---
+
+## 📎 Dataset Source
+
+Ensure the dataset follows the structure:
+```
+dataset/
+├── train/
+│   ├── COVID/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+└── test/
+    ├── COVID/
+    ├── NORMAL/
+    └── PNEUMONIA/
+```
+
+> 📌 Dataset used in this project "https://www.kaggle.com/datasets/prashant268/chest-xray-covid19-pneumonia"
+
+---
+
+## ✅ Future Work
+
+- Experiment with EfficientNet, ResNet.
+- Try ensemble models.
+- Integrate with a Flask web app or Streamlit for live predictions.
+- Convert model to **TFLite/ONNX** for edge deployment.
+
+---
